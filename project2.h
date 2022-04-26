@@ -37,9 +37,9 @@ int wt = 0;
 
 // cache struct model
 struct Set {
-    unsigned int valid[4]; 
-    unsigned int * dirty[4];
-    unsigned int * tag[4];
+    int valid[4]; 
+    int dirty[4];
+    unsigned int tag[4];
     int last_accessed;
 };
 typedef struct Set Set;

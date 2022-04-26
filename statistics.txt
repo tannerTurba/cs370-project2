@@ -4,4 +4,4 @@ rmisses: 16
 wmisses: 14
 hrate: 0.000000
 wb: 0
-wt: 15
+wt: 0
