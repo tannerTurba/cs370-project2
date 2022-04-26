@@ -41,6 +41,9 @@ int main() {
     // begin simulation
     simulate();
 
+    // print stats
+    print_out_data();
+
     // free all data
     cleanup();
 }
@@ -80,11 +83,11 @@ void simulate() {
         int j, hit = 0;
         for(j = 0; j < way_size && hit == 0; j++) {
             unsigned int valid_bit = selected_set.valid[j];
-            unsigned int dirty_bit = selected_set.dirty[j];
-            unsigned int tag_bit = selected_set.tag[j];
+            unsigned int * dirty_bit = selected_set.dirty[j];
+            unsigned int * tag_bit = selected_set.tag[j];
 
             // determing hit or miss
-            hit = (valid_bit == 1) && (tag_bit == tag);
+            hit = (valid_bit == 1) && (* tag_bit == tag);
 
             // allocation actions
             switch (allocation) {
@@ -95,7 +98,7 @@ void simulate() {
                     } 
                     else if(hit == 0 && access_type == 'r') {
                         // read miss: allocate block/update tag
-                        selected_set.tag[j] = tag;
+                        selected_set.tag[j] =& tag;
                         rmisses++;
                     }
                     else if(hit == 1 && access_type == 'w') {
@@ -104,7 +107,7 @@ void simulate() {
                     }
                     else if(hit == 0 && access_type == 'w') {
                         // write miss: allocate block/update tag
-                        selected_set.tag[j] = tag;
+                        selected_set.tag[j] =& tag;
                         wmisses++;
                     }
                     break;
@@ -138,24 +141,24 @@ void simulate() {
                     else if(hit == 0 && access_type == 'r') {
                         // read miss: get block from memory, update block in cache
                         wt++;
-                        selected_set.tag[j] = tag;
+                        selected_set.tag[j] =& tag;
                         rmisses++;
                     }
                     else if(hit == 1 && access_type == 'w') {
                         // write hit: tag in cache, do nothing
-                        selected_set.tag[j] = tag;
+                        selected_set.tag[j] =& tag;
                         whits++;
                     }
                     else if(hit == 0 && access_type == 'w') {
                         // write miss: write current block to next level of memory hierarchy, update block in cache
                         wt++;
-                        selected_set.tag[j] = tag;
+                        selected_set.tag[j] =& tag;
                         wmisses++;
                     }
                     break;
                 
                 case writeBack:
-                    if(dirty_bit == 1 && hit == 1 && access_type == 'r') {
+                    if(* dirty_bit == 1 && hit == 1 && access_type == 'r') {
                         // read hit: write current block to next level, update dirty bit
                         selected_set.dirty[j] = 0;
                         wb++;
@@ -165,21 +168,32 @@ void simulate() {
                         // read miss: do nothing
                         rmisses++;
                     }
-                    else if(dirty_bit == 1 && hit == 1 && access_type == 'w') {
+                    else if(* dirty_bit == 1 && hit == 1 && access_type == 'w') {
                         // write hit: write currebt block to next level, update dirty bit
-                        selected_set.dirty[j] = 1;
+                        * selected_set.dirty[j] = (unsigned int)0x1;
                         wb++;
                         whits++;
                     }
                     else if(dirty_bit == 0 && hit == 0 && access_type == 'w') {
                         // write miss: write to cache, update dirty bit
-                        selected_set.dirty[j] = 1;
+                        * selected_set.dirty[j] = (unsigned int)0x1;
                         wmisses++;
                     }
                     break;
             }
         }
     }
+}
+
+void print_out_data() {
+    FILE *fout = fopen("statistics.txt", "w");
+    fprintf(fout, "rhits: %d\n", rhits);
+    fprintf(fout, "whits: %d\n", whits);
+    fprintf(fout, "rmisses: %d\n", rmisses);
+    fprintf(fout, "wmisses: %d\n", wmisses);
+    fprintf(fout, "hrate: %f\n", (double)(rhits + whits) / (double)(rhits + whits + rmisses + wmisses));
+    fprintf(fout, "wb: %d\n", wb);
+    fprintf(fout, "wt: %d\n", wt);
 }
 
 int find_num_of_sets(int index_bits) {

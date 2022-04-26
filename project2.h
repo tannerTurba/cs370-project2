@@ -4,6 +4,7 @@
 
 // methods
 void simulate();
+void print_out_data();
 int find_num_of_sets(int index_bits);
 unsigned int find_offset(unsigned int addr);
 unsigned int find_index(unsigned int addr);
