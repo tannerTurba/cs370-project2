@@ -94,7 +94,7 @@ void simulate() {
         int j, hit = 0;
         for(j = 0; j < way_size && hit == 0; j++) {
             unsigned int valid_bit = selected_set.valid[j];
-            int * dirty_bit = &selected_set.dirty[j];
+            int dirty_bit = selected_set.dirty[j];
             unsigned int * tag_bit = &selected_set.tag[j];
 
             // determing hit or miss
@@ -193,19 +193,19 @@ void simulate() {
                     break;
                 
                 case writeBack:
-                    if(*dirty_bit == 1 && hit == 1 && access_type == 'r') {
+                    if(dirty_bit == 1 && hit == 1 && access_type == 'r') {
                         // read hit: update dirty bit
                         printf("writeBack - read hit\n");
                         selected_set.dirty[j] = 0;
                         rhits++;
                     } 
-                    else if(*dirty_bit == 0 && hit == 0 && access_type == 'r') {
+                    else if(dirty_bit == 0 && hit == 0 && access_type == 'r') {
                         // read miss: do nothing
                         printf("writeBack - read miss\n");
                         selected_set.dirty[j] = 0;
                         rmisses++;
                     }
-                    else if(*dirty_bit == 1 && hit == 1 && access_type == 'w') {
+                    else if(dirty_bit == 1 && hit == 1 && access_type == 'w') {
                         // write hit: write currebt block to next level, update dirty bit
                         printf("writeBack - write hit\n");
                         selected_set.tag[j] = tag;
@@ -213,7 +213,7 @@ void simulate() {
                         wb++;
                         whits++;
                     }
-                    else if(*dirty_bit == 0 && hit == 0 && access_type == 'w') {
+                    else if(dirty_bit == 0 && hit == 0 && access_type == 'w') {
                         // write miss: depends on allocation policy
                         printf("writeBack - write miss\n");
                         switch (allocation) {
