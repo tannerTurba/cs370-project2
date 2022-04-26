@@ -84,44 +84,100 @@ void simulate() {
             unsigned int tag_bit = selected_set.tag[j];
 
             // determing hit or miss
-            hit = (dirty_bit == 1) && (tag_bit == tag);
-        }
-        // update hit/miss stats
-        if(hit == 1 && access_type == 'r') {
-            rhits++;
-        } 
-        else if(hit == 0 && access_type == 'r') {
-            rmisses++;
-        }
-        else if(hit == 1 && access_type == 'w') {
-            whits++;
-        }
-        else if(hit == 0 && access_type == 'w') {
-            wmisses++;
-        }
+            hit = (valid_bit == 1) && (tag_bit == tag);
 
-        // allocation actions
-        switch (allocation) {
+            // allocation actions
+            switch (allocation) {
                 case writeAllocate:
-
+                    if(hit == 1 && access_type == 'r') {
+                        // read hit: read block, do nothing
+                        rhits++;
+                    } 
+                    else if(hit == 0 && access_type == 'r') {
+                        // read miss: allocate block/update tag
+                        selected_set.tag[j] = tag;
+                        rmisses++;
+                    }
+                    else if(hit == 1 && access_type == 'w') {
+                        // write hit: do nothing
+                        whits++;
+                    }
+                    else if(hit == 0 && access_type == 'w') {
+                        // write miss: allocate block/update tag
+                        selected_set.tag[j] = tag;
+                        wmisses++;
+                    }
                     break;
                 
                 case writeNoAllocate:
-
+                    if(hit == 1 && access_type == 'r') {
+                        // read hit: read block, do nothing
+                        rhits++;
+                    } 
+                    else if(hit == 0 && access_type == 'r') {
+                        // read miss: do nothing
+                        rmisses++;
+                    }
+                    else if(hit == 1 && access_type == 'w') {
+                        // write hit: write back
+                        whits++;
+                    }
+                    else if(hit == 0 && access_type == 'w') {
+                        // write miss: do nothing
+                        wmisses++;
+                    }
                     break;
-        }
-
-        // write policy
-        switch (writePolicy) {
+            }
+            // write policy
+            switch (writePolicy) {
                 case writeThrough:
-                    wt++;
-                    
+                    if(hit == 1 && access_type == 'r') {
+                        // read hit: tag in cache, do nothing
+                        rhits++;
+                    } 
+                    else if(hit == 0 && access_type == 'r') {
+                        // read miss: get block from memory, update block in cache
+                        wt++;
+                        selected_set.tag[j] = tag;
+                        rmisses++;
+                    }
+                    else if(hit == 1 && access_type == 'w') {
+                        // write hit: tag in cache, do nothing
+                        selected_set.tag[j] = tag;
+                        whits++;
+                    }
+                    else if(hit == 0 && access_type == 'w') {
+                        // write miss: write current block to next level of memory hierarchy, update block in cache
+                        wt++;
+                        selected_set.tag[j] = tag;
+                        wmisses++;
+                    }
                     break;
                 
                 case writeBack:
-                    wb++;
-                    
+                    if(dirty_bit == 1 && hit == 1 && access_type == 'r') {
+                        // read hit: write current block to next level, update dirty bit
+                        selected_set.dirty[j] = 0;
+                        wb++;
+                        rhits++;
+                    } 
+                    else if(dirty_bit == 0 && hit == 0 && access_type == 'r') {
+                        // read miss: do nothing
+                        rmisses++;
+                    }
+                    else if(dirty_bit == 1 && hit == 1 && access_type == 'w') {
+                        // write hit: write currebt block to next level, update dirty bit
+                        selected_set.dirty[j] = 1;
+                        wb++;
+                        whits++;
+                    }
+                    else if(dirty_bit == 0 && hit == 0 && access_type == 'w') {
+                        // write miss: write to cache, update dirty bit
+                        selected_set.dirty[j] = 1;
+                        wmisses++;
+                    }
                     break;
+            }
         }
     }
 }
