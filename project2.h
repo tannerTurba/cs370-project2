@@ -7,12 +7,12 @@ struct Set {
     int valid[4]; 
     int dirty[4];
     unsigned int tag[4];
-    int last_accessed;
+    int * fifo;
 };
 typedef struct Set Set;
 
 // methods
-int check_replacement(Set * cache, int index);
+int get_replacement_index(int * fifo, int current_index, int way_size);
 void debug(Set * cache, int way_size);
 void simulate();
 void print_out_data();
