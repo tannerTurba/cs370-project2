@@ -114,58 +114,58 @@ void simulate() {
             printf("hit = %d\n", hit);
 
             // allocation actions
-            switch (allocation) {
-                case writeAllocate:
-                    if(hit == 1 && access_type == 'r') {
-                        // read hit: read block, do nothing
-                        printf("writeAllocate - read hit\n");
-                        rhits++;
-                    } 
-                    else if(hit == 0 && access_type == 'r') {
-                        // read miss: allocate block/update tag & valid bit
-                        printf("writeAllocate - read miss\n");
-                        cache[index].tag[j] = tag;
-                        cache[index].valid[j] = 1;
-                        rmisses++;
-                    }
-                    else if(hit == 1 && access_type == 'w') {
-                        // write hit: do nothing
-                        printf("writeAllocate - write hit\n");
-                        whits++;
-                    }
-                    else if(hit == 0 && access_type == 'w') {
-                        // write miss: allocate block/update tag & valid bit
-                        printf("writeAllocate - write miss\n");
-                        cache[index].tag[j] = tag;
-                        cache[index].valid[j] = 1;
-                        wmisses++;
-                    }
-                    break;
+            // switch (allocation) {
+            //     case writeAllocate:
+            //         if(hit == 1 && access_type == 'r') {
+            //             // read hit: read block, do nothing
+            //             printf("writeAllocate - read hit\n");
+            //             rhits++;
+            //         } 
+            //         else if(hit == 0 && access_type == 'r') {
+            //             // read miss: allocate block/update tag & valid bit
+            //             printf("writeAllocate - read miss\n");
+            //             cache[index].tag[j] = tag;
+            //             cache[index].valid[j] = 1;
+            //             rmisses++;
+            //         }
+            //         else if(hit == 1 && access_type == 'w') {
+            //             // write hit: do nothing
+            //             printf("writeAllocate - write hit\n");
+            //             whits++;
+            //         }
+            //         else if(hit == 0 && access_type == 'w') {
+            //             // write miss: allocate block/update tag & valid bit
+            //             printf("writeAllocate - write miss\n");
+            //             cache[index].tag[j] = tag;
+            //             cache[index].valid[j] = 1;
+            //             wmisses++;
+            //         }
+            //         break;
                 
-                case writeNoAllocate:
-                    if(hit == 1 && access_type == 'r') {
-                        // read hit: read block, do nothing
-                        printf("writeNoAllocate - read hit\n");
-                        rhits++;
-                    } 
-                    else if(hit == 0 && access_type == 'r') {
-                        // read miss: update tag & valid bit
-                        printf("writeNoAllocate - read miss\n");
-                        cache[index].valid[j] = 1;
-                        rmisses++;
-                    }
-                    else if(hit == 1 && access_type == 'w') {
-                        // write hit: write back(do nothing)
-                        printf("writeNoAllocate - write hit\n");
-                        whits++;
-                    }
-                    else if(hit == 0 && access_type == 'w') {
-                        // write miss: do nothing
-                        printf("writeNoAllocate - write miss\n");
-                        wmisses++;
-                    }
-                    break;
-            }
+            //     case writeNoAllocate:
+            //         if(hit == 1 && access_type == 'r') {
+            //             // read hit: read block, do nothing
+            //             printf("writeNoAllocate - read hit\n");
+            //             rhits++;
+            //         } 
+            //         else if(hit == 0 && access_type == 'r') {
+            //             // read miss: update valid bit
+            //             printf("writeNoAllocate - read miss\n");
+            //             cache[index].valid[j] = 1;
+            //             rmisses++;
+            //         }
+            //         else if(hit == 1 && access_type == 'w') {
+            //             // write hit: write back(do nothing)
+            //             printf("writeNoAllocate - write hit\n");
+            //             whits++;
+            //         }
+            //         else if(hit == 0 && access_type == 'w') {
+            //             // write miss: do nothing
+            //             printf("writeNoAllocate - write miss\n");
+            //             wmisses++;
+            //         }
+            //         break;
+            // }
 
             // write policy
             switch (writePolicy) {
@@ -179,6 +179,18 @@ void simulate() {
                         // read miss: do nothing
                         printf("writeThrough - read miss\n");
                         rmisses++;
+                        switch (allocation) {
+                            case writeAllocate:
+                                //write the tag & valid = 1
+                                cache[index].tag[j] = tag;
+                                cache[index].valid[j] = 1;
+                                break;
+                            
+                            case writeNoAllocate:
+                                //update valid bit
+                                cache[index].valid[j] = 1;
+                                break;
+                        }
                     }
                     else if(hit == 1 && access_type == 'w') {
                         // write hit: write through, do nothing
@@ -189,6 +201,8 @@ void simulate() {
                     else if(hit == 0 && access_type == 'w') {
                         // write miss: depends on allocation policy
                         printf("writeThrough - write miss\n");
+                        wt++;
+                        wmisses++;
                         switch (allocation) {
                             case writeAllocate:
                                 //write the tag & valid = 1
@@ -200,8 +214,6 @@ void simulate() {
                                 //do nothing
                                 break;
                         }
-                        wt++;
-                        wmisses++;
                     }
                     break;
                 
@@ -214,28 +226,44 @@ void simulate() {
                         cache[index].dirty[j] = 0;
                         rhits++;
                     } 
-                    else if(dirty_bit == 0 && hit == 0 && access_type == 'r') {
+                    else if(dirty_bit == 0 && access_type == 'r') {
                         // read miss: do nothing
                         printf("writeBack - read miss\n");
                         cache[index].dirty[j] = 0;
                         rmisses++;
+                        switch (allocation) {
+                            case writeAllocate:
+                                //write the tag & valid = 1
+                                cache[index].tag[j] = tag;
+                                cache[index].valid[j] = 1;
+                                cache[index].dirty[j] = 1;  //??
+                                break;
+                            
+                            case writeNoAllocate:
+                                //update valid bit
+                                cache[index].valid[j] = 1;
+                                break;
+                        }
                     }
                     else if(dirty_bit == 1 && hit == 1 && access_type == 'w') {
                         // write hit: write current block to next level, update dirty bit
                         printf("writeBack - write hit\n");
                         cache[index].tag[j] = tag;
                         cache[index].dirty[j] = 1;
-                        wb++;
+                        cache[index].valid[j] = 1; //??
+                        // wb++; //??
                         whits++;
                     }
                     else if(dirty_bit == 0 && access_type == 'w') {
                         // write miss: depends on allocation policy
                         printf("writeBack - write miss\n");
+                        wmisses++;
                         switch (allocation) {
                             case writeAllocate:
                                 //write the tag & valid = 1
                                 cache[index].tag[j] = tag;
                                 cache[index].valid[j] = 1;
+                                cache[index].dirty[j] = 1;  //??
                                 break;
                             
                             case writeNoAllocate:
@@ -243,7 +271,6 @@ void simulate() {
                                 wt++;
                                 break;
                         }
-                        wmisses++;
                     }
                     break; 
             }
