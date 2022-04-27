@@ -2,7 +2,17 @@
 #include <stdio.h>
 #include <string.h>
 
+// cache struct model
+struct Set {
+    int valid[4]; 
+    int dirty[4];
+    unsigned int tag[4];
+    int last_accessed;
+};
+typedef struct Set Set;
+
 // methods
+void debug(Set * cache, int way_size);
 void simulate();
 void print_out_data();
 int find_num_of_sets(int index_bits);
@@ -35,11 +45,4 @@ int wmisses = 0;
 int wb = 0;
 int wt = 0;
 
-// cache struct model
-struct Set {
-    int valid[4]; 
-    int dirty[4];
-    unsigned int tag[4];
-    int last_accessed;
-};
-typedef struct Set Set;
+

@@ -1,7 +1,7 @@
-rhits: 0
-whits: 0
-rmisses: 16
-wmisses: 14
-hrate: 0.000000
+rhits: 3
+whits: 4
+rmisses: 10
+wmisses: 6
+hrate: 0.304348
 wb: 0
 wt: 0

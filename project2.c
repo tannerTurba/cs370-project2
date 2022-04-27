@@ -48,6 +48,17 @@ int main() {
     cleanup();
 }
 
+void debug(Set * cache, int way_size) {
+    int j;
+    for(j = 0; j < way_size; j++) {
+        int valid_bit = cache[0].valid[j];
+        int dirty_bit = cache[0].dirty[j];
+        unsigned int tag_bit = cache[0].tag[j];
+
+        printf("valid_bit = %d \ndirty_bit = %d \ntag_bit = %x\n\n", valid_bit, dirty_bit, tag_bit);
+    }
+}
+
 void simulate() {
     // create the cache using index_bits to find number of sets
     int num_of_sets = find_num_of_sets(index_bits);
@@ -72,14 +83,13 @@ void simulate() {
     // initialize valid and dirty bits
     int i;
     for(i = 0; i < num_of_sets; i++) {
-        Set current_set = cache[i];
+        // Set current_set = cache[i];
         int x;
         for(x = 0; x < way_size; x++) {
-            current_set.valid[x] = 0;
-            current_set.dirty[x] = 0;
+            cache[i].valid[x] = 0;
+            cache[i].dirty[x] = 0;
         }
     }
-
 
     for(i = 0; i < file_length; i++) {
         // for each instruction in the file, get the components
@@ -89,16 +99,19 @@ void simulate() {
         char access_type = types[i];
 
         // index into a set from the cache and loop through its contents
-        Set selected_set = cache[index];
-        selected_set.last_accessed++;
+        // Set cache[index] = cache[index];
+        cache[index].last_accessed++;
         int j, hit = 0;
-        for(j = 0; j < way_size && hit == 0; j++) {
-            unsigned int valid_bit = selected_set.valid[j];
-            int dirty_bit = selected_set.dirty[j];
-            unsigned int * tag_bit = &selected_set.tag[j];
+        for(j = 0; j < way_size; j++) {
+            unsigned int valid_bit = cache[index].valid[j];
+            int dirty_bit = cache[index].dirty[j];
+            unsigned int tag_bit = cache[index].tag[j];
+            // debug(cache, way_size); 
 
             // determing hit or miss
-            hit = (valid_bit == 1) && (* tag_bit == tag);
+            hit = ((valid_bit == 1) && (tag_bit == tag));
+            printf("%x(valid_bit) == 1 && %x(tag_bit) == %x(tag)\n", valid_bit, tag_bit, tag);
+            printf("hit = %d\n", hit);
 
             // allocation actions
             switch (allocation) {
@@ -111,8 +124,8 @@ void simulate() {
                     else if(hit == 0 && access_type == 'r') {
                         // read miss: allocate block/update tag & valid bit
                         printf("writeAllocate - read miss\n");
-                        selected_set.tag[j] = tag;
-                        selected_set.valid[j] = 1;
+                        cache[index].tag[j] = tag;
+                        cache[index].valid[j] = 1;
                         rmisses++;
                     }
                     else if(hit == 1 && access_type == 'w') {
@@ -123,8 +136,8 @@ void simulate() {
                     else if(hit == 0 && access_type == 'w') {
                         // write miss: allocate block/update tag & valid bit
                         printf("writeAllocate - write miss\n");
-                        selected_set.tag[j] = tag;
-                        selected_set.valid[j] = 1;
+                        cache[index].tag[j] = tag;
+                        cache[index].valid[j] = 1;
                         wmisses++;
                     }
                     break;
@@ -138,7 +151,7 @@ void simulate() {
                     else if(hit == 0 && access_type == 'r') {
                         // read miss: update tag & valid bit
                         printf("writeNoAllocate - read miss\n");
-                        selected_set.valid[j] = 1;
+                        cache[index].valid[j] = 1;
                         rmisses++;
                     }
                     else if(hit == 1 && access_type == 'w') {
@@ -179,8 +192,8 @@ void simulate() {
                         switch (allocation) {
                             case writeAllocate:
                                 //write the tag & valid = 1
-                                selected_set.tag[j] = tag;
-                                selected_set.valid[j] = 1;
+                                cache[index].tag[j] = tag;
+                                cache[index].valid[j] = 1;
                                 break;
                             
                             case writeNoAllocate:
@@ -196,20 +209,20 @@ void simulate() {
                     if(dirty_bit == 1 && hit == 1 && access_type == 'r') {
                         // read hit: update dirty bit
                         printf("writeBack - read hit\n");
-                        selected_set.dirty[j] = 0;
+                        cache[index].dirty[j] = 0;
                         rhits++;
                     } 
                     else if(dirty_bit == 0 && hit == 0 && access_type == 'r') {
                         // read miss: do nothing
                         printf("writeBack - read miss\n");
-                        selected_set.dirty[j] = 0;
+                        cache[index].dirty[j] = 0;
                         rmisses++;
                     }
                     else if(dirty_bit == 1 && hit == 1 && access_type == 'w') {
                         // write hit: write currebt block to next level, update dirty bit
                         printf("writeBack - write hit\n");
-                        selected_set.tag[j] = tag;
-                        selected_set.dirty[j] = 1;
+                        cache[index].tag[j] = tag;
+                        cache[index].dirty[j] = 1;
                         wb++;
                         whits++;
                     }
@@ -219,8 +232,8 @@ void simulate() {
                         switch (allocation) {
                             case writeAllocate:
                                 //write the tag & valid = 1
-                                selected_set.tag[j] = tag;
-                                selected_set.valid[j] = 1;
+                                cache[index].tag[j] = tag;
+                                cache[index].valid[j] = 1;
                                 break;
                             
                             case writeNoAllocate:
@@ -232,6 +245,8 @@ void simulate() {
                     }
                     break; 
             }
+            // debug(cache, way_size);
+            printf("____________________________\n");
         }
     }
 }
@@ -276,6 +291,7 @@ void interpret_input(FILE * infile) {
     while( fscanf(infile, "%s", blank) != EOF) {
         file_length++;
     }
+    file_length = file_length / 2;
     fseek(infile, 0, SEEK_SET);
 
     //allocate space for arrays
