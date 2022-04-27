@@ -206,6 +206,8 @@ void simulate() {
                     break;
                 
                 case writeBack:
+                printf("dirty_bit = %d\n", dirty_bit);
+                printf("access_type = %c\n", access_type);
                     if(dirty_bit == 1 && hit == 1 && access_type == 'r') {
                         // read hit: update dirty bit
                         printf("writeBack - read hit\n");
@@ -219,14 +221,14 @@ void simulate() {
                         rmisses++;
                     }
                     else if(dirty_bit == 1 && hit == 1 && access_type == 'w') {
-                        // write hit: write currebt block to next level, update dirty bit
+                        // write hit: write current block to next level, update dirty bit
                         printf("writeBack - write hit\n");
                         cache[index].tag[j] = tag;
                         cache[index].dirty[j] = 1;
                         wb++;
                         whits++;
                     }
-                    else if(dirty_bit == 0 && hit == 0 && access_type == 'w') {
+                    else if(dirty_bit == 0 && access_type == 'w') {
                         // write miss: depends on allocation policy
                         printf("writeBack - write miss\n");
                         switch (allocation) {
