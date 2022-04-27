@@ -12,6 +12,7 @@ struct Set {
 typedef struct Set Set;
 
 // methods
+int check_replacement(Set * cache, int index);
 void debug(Set * cache, int way_size);
 void simulate();
 void print_out_data();
