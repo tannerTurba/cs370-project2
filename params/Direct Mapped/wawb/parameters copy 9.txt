@@ -9,5 +9,5 @@ whits: 926
 rmisses: 944
 wmisses: 96
 hrate: 0.757009
-wb: 0
+wb: 1032
 wt: 0

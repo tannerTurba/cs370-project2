@@ -5,10 +5,10 @@ wa
 wb
 
 
-rhits: 2017
-whits: 358
-rmisses: 1241
-wmisses: 664
-hrate: 0.554907
-wb: 0
+rhits: 2014
+whits: 329
+rmisses: 1244
+wmisses: 693
+hrate: 0.547430
+wb: 971
 wt: 0

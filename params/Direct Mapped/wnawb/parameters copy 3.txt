@@ -10,5 +10,5 @@ whits: 350
 rmisses: 1142
 wmisses: 672
 hrate: 0.576168
-wb: 0
+wb: 858
 wt: 0

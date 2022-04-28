@@ -5,10 +5,10 @@ wna
 wb
 
 
-rhits: 2512
+rhits: 2466
 whits: 341
-rmisses: 746
+rmisses: 792
 wmisses: 681
-hrate: 0.666589
-wb: 0
+hrate: 0.655841
+wb: 728
 wt: 0

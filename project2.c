@@ -100,7 +100,6 @@ void simulate() {
         }
     }
 
-    printf("way size = %d\n", way_size);
     for(i = 0; i < file_length; i++) {
         // for each instruction in the file, get the components
         unsigned int index = find_index(addresses[i]);
@@ -111,7 +110,6 @@ void simulate() {
         // index into a set from the cache and loop through its contents
         int j, hit = 0;
         for(j = 0; j < 1; j++) {
-            printf("%d", j);
             unsigned int valid_bit = cache[index].valid[j];
             int dirty_bit = cache[index].dirty[j];
             unsigned int tag_bit = cache[index].tag[j];
@@ -213,6 +211,7 @@ void simulate() {
             }
         }
     }
+    free(cache);
 }
 
 void print_out_data() {
@@ -278,8 +277,6 @@ void interpret_parameters(FILE * infile) {
     get_data(infile);
     char * lineFour = get_data(infile);
     char * lineFive = get_data(infile);
-
-    printf("lineOne = %s\n", lineOne);
 
     // determine assosciativity 
     if('1' == *lineOne) {

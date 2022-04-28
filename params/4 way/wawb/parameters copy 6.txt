@@ -4,10 +4,10 @@
 wa
 wb
 
-rhits: 2372
-whits: 810
-rmisses: 886
-wmisses: 212
-hrate: 0.743458
-wb: 0
+rhits: 2273
+whits: 795
+rmisses: 985
+wmisses: 227
+hrate: 0.716822
+wb: 956
 wt: 0

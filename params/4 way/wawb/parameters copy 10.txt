@@ -4,11 +4,11 @@
 wa
 wb
 
-
-rhits: 1823
-whits: 893
-rmisses: 1435
-wmisses: 129
-hrate: 0.634579
-wb: 0
+rhits: 1817
+whits: 894
+rmisses: 1441
+wmisses: 128
+hrate: 0.633411
+wb: 1553
 wt: 0
+

@@ -6,9 +6,10 @@ wb
 
 
 rhits: 1823
-whits: 893
+whits: 894
 rmisses: 1435
-wmisses: 129
-hrate: 0.634579
-wb: 0
+wmisses: 128
+hrate: 0.634813
+wb: 1555
 wt: 0
+
