@@ -146,7 +146,8 @@ void simulate() {
                     cache[index].valid[replace_index] = 1;
 
                     // check replacement 
-                    if(is_replaced == 1) {
+                    // printf("%d\n", is_replaced);
+                    if(is_replaced) {
                         switch(writePolicy) {
                             case writeThrough:
                                 // do nothing
@@ -159,7 +160,7 @@ void simulate() {
                                 break;
                         }
                     }
-                    else if(is_replaced == 0) {
+                    else if(!is_replaced) {
                         // do nothing
                     }
                 }
@@ -195,6 +196,7 @@ void simulate() {
                             cache[index].tag[replace_index] = tag;
                             cache[index].valid[replace_index] = 1;
                             
+                            // printf("%d\n", is_replaced);
                             if(is_replaced) {
                                 switch(writePolicy) {
                                     case writeThrough:
@@ -217,8 +219,6 @@ void simulate() {
                     }
                 }
             }
-            // debug(cache, way_size);
-            // printf("____________________________\n");
         }
     }
 }
