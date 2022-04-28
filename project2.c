@@ -59,18 +59,17 @@ void debug(Set * cache, int way_size) {
     }
 }
 
-int get_replacement_index(int * fifo, int current_index, int way_size) {
-    printf("get replacement index\n");
+int get_replacement_index(Set * cache, int cache_index, int way_index, int way_size) {
     // pop the replacement index from the front of the queue array
-    int replacement_index = fifo[0];
+    int replacement_index = cache[cache_index].fifo[0];
 
     // pull forward each remaining element in queue
     int i;
     for(i = 0; i + 1 < way_size; i++) {
-        fifo[i] = fifo[i + 1];
+        cache[cache_index].fifo[i] = cache[cache_index].fifo[i + 1];
     }
     // place the current index(most recently accessed) in the last index of the queue
-    fifo[way_size - 1] = current_index;
+    cache[cache_index].fifo[way_size - 1] = way_index;
 
     return replacement_index;
 }
@@ -95,25 +94,15 @@ void simulate() {
             way_size = 4;
             break;
     }
-
-    printf("before allocate fifo array\n");
-    // dynamically allocate space for fifo queue array
-    cache->fifo = (int *)malloc(sizeof(int) * way_size);
-    printf("after allocate fifo array\n");
     
-
     // initialize valid and dirty bits
     int i;
-    printf("array");
     for(i = 0; i < num_of_sets; i++) {
-        printf("inner loop");
         int x;
         for(x = 0; x < way_size; x++) {
             cache[i].valid[x] = 0;
             cache[i].dirty[x] = 0;
-            printf("before fifo[i] = x");
             cache[i].fifo[x] = x;
-            printf("after fifo[i] = x");
         }
     }
 
@@ -146,10 +135,8 @@ void simulate() {
                     // read miss
                     rmisses++;
 
-                    printf("before replace index method");
                     // get the index of the block in the set that will be over written
-                    int replace_index = get_replacement_index(cache[index].fifo, index, way_size);
-                    printf("after replace index method");
+                    int replace_index = get_replacement_index(cache, index, j, way_size);
 
                     // determine if that block is being replaced
                     int is_replaced = cache[index].valid[replace_index] == 1;
@@ -198,7 +185,7 @@ void simulate() {
                         case writeAllocate:
                             printf("");
                             // get the index of the block in the set that will be over written
-                            int replace_index = get_replacement_index(cache[index].fifo, index, way_size);
+                            int replace_index = get_replacement_index(cache, index, j, way_size);
 
                             // determine if that block is being replaced
                             int is_replaced = cache[index].valid[replace_index] == 1;
@@ -297,12 +284,6 @@ void interpret_parameters(FILE * infile) {
     get_data(infile);
     char * lineFour = get_data(infile);
     char * lineFive = get_data(infile);
-
-    // printf("\nlineOne: %s\n", lineOne);
-    // printf("offset_bits: %d\n", offset_bits);
-    // printf("index_bits: %d\n", index_bits);
-    // printf("lineFour: %s\n", lineFour);
-    // printf("lineFive: %s\n", lineFive);
 
     // determine assosciativity 
     if(strcmp("1", lineOne)) {
