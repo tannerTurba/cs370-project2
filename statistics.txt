@@ -1,7 +1,7 @@
-rhits: 2372
-whits: 810
-rmisses: 886
-wmisses: 212
-hrate: 0.743458
+rhits: 2306
+whits: 281
+rmisses: 952
+wmisses: 741
+hrate: 0.604439
 wb: 0
 wt: 0

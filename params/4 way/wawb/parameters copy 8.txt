@@ -3,3 +3,12 @@
 4
 wa
 wb
+
+
+rhits: 2526
+whits: 915
+rmisses: 732
+wmisses: 107
+hrate: 0.803972
+wb: 0
+wt: 0

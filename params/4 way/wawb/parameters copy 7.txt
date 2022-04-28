@@ -3,3 +3,12 @@
 5
 wa
 wb
+
+
+rhits: 2497
+whits: 887
+rmisses: 761
+wmisses: 135
+hrate: 0.790654
+wb: 0
+wt: 0

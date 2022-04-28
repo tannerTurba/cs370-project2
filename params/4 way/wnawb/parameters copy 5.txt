@@ -3,3 +3,11 @@
 7
 wna
 wb
+
+rhits: 2157
+whits: 356
+rmisses: 1101
+wmisses: 666
+hrate: 0.587150
+wb: 0
+wt: 0

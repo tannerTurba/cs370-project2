@@ -55,7 +55,7 @@ void debug(Set * cache, int way_size) {
         int dirty_bit = cache[0].dirty[j];
         unsigned int tag_bit = cache[0].tag[j];
 
-        printf("valid_bit = %d \ndirty_bit = %d \ntag_bit = %x\n\n", valid_bit, dirty_bit, tag_bit);
+        // printf("valid_bit = %d \ndirty_bit = %d \ntag_bit = %x\n\n", valid_bit, dirty_bit, tag_bit);
     }
 }
 
@@ -123,8 +123,8 @@ void simulate() {
 
             // determing hit or miss
             hit = ((valid_bit == 1) && (tag_bit == tag));
-            printf("%x(valid_bit) == 1 && %x(tag_bit) == %x(tag)\n", valid_bit, tag_bit, tag);
-            printf("hit = %d\n", hit);
+            // printf("%x(valid_bit) == 1 && %x(tag_bit) == %x(tag)\n", valid_bit, tag_bit, tag);
+            // printf("hit = %d\n", hit);
 
             if(access_type == 'r') {
                 if(hit == 1) {
@@ -155,6 +155,7 @@ void simulate() {
                             case writeBack:
                                 // update dirty bit
                                 cache[index].dirty[replace_index] = 0;
+                                wb++;
                                 break;
                         }
                     }
@@ -204,6 +205,7 @@ void simulate() {
                                     case writeBack:
                                         // update dirty bit
                                         cache[index].dirty[replace_index] = 1;
+                                        wb++;
                                         break;
                                 }
                             }

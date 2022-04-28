@@ -3,3 +3,11 @@
 9
 wa
 wb
+
+rhits: 2092
+whits: 358
+rmisses: 1166
+wmisses: 664
+hrate: 0.572430
+wb: 0
+wt: 0

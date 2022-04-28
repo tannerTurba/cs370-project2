@@ -3,3 +3,11 @@
 8
 wa
 wb
+
+rhits: 2017
+whits: 358
+rmisses: 1241
+wmisses: 664
+hrate: 0.554907
+wb: 0
+wt: 0

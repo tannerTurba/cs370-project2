@@ -3,3 +3,12 @@
 8
 wna
 wb
+
+
+rhits: 2049
+whits: 349
+rmisses: 1209
+wmisses: 673
+hrate: 0.560280
+wb: 0
+wt: 0
