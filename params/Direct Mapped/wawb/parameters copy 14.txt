@@ -1,0 +1,13 @@
+1
+8 
+3
+wa
+wb
+
+rhits: 2314
+whits: 926
+rmisses: 944
+wmisses: 96
+hrate: 0.757009
+wb: 0
+wt: 0

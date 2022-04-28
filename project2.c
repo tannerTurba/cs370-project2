@@ -32,12 +32,6 @@ int main() {
     // get data from the accesses file
     interpret_input(accesses);
 
-    // printf("\nassociativity = directMapped: %d\n", associativity == directMapped);
-    // printf("offset_bits: %d\n", offset_bits);
-    // printf("index_bits: %d\n", index_bits);
-    // printf("allocation = writeAllocate: %d\n", allocation == writeAllocate);
-    // printf("writePolicy = writeBack: %d\n", writePolicy = writeBack);
-
     // begin simulation
     simulate();
 
@@ -106,6 +100,7 @@ void simulate() {
         }
     }
 
+    printf("way size = %d\n", way_size);
     for(i = 0; i < file_length; i++) {
         // for each instruction in the file, get the components
         unsigned int index = find_index(addresses[i]);
@@ -115,16 +110,14 @@ void simulate() {
 
         // index into a set from the cache and loop through its contents
         int j, hit = 0;
-        for(j = 0; j < way_size; j++) {
+        for(j = 0; j < 1; j++) {
+            printf("%d", j);
             unsigned int valid_bit = cache[index].valid[j];
             int dirty_bit = cache[index].dirty[j];
             unsigned int tag_bit = cache[index].tag[j];
-            // debug(cache, way_size); 
 
             // determing hit or miss
             hit = ((valid_bit == 1) && (tag_bit == tag));
-            // printf("%x(valid_bit) == 1 && %x(tag_bit) == %x(tag)\n", valid_bit, tag_bit, tag);
-            // printf("hit = %d\n", hit);
 
             if(access_type == 'r') {
                 if(hit == 1) {
@@ -146,7 +139,6 @@ void simulate() {
                     cache[index].valid[replace_index] = 1;
 
                     // check replacement 
-                    // printf("%d\n", is_replaced);
                     if(is_replaced) {
                         switch(writePolicy) {
                             case writeThrough:
@@ -287,12 +279,14 @@ void interpret_parameters(FILE * infile) {
     char * lineFour = get_data(infile);
     char * lineFive = get_data(infile);
 
+    printf("lineOne = %s\n", lineOne);
+
     // determine assosciativity 
-    if(strcmp("1", lineOne)) {
+    if('1' == *lineOne) {
         associativity = directMapped;
-    } else if(strcmp("2", lineOne)) {
+    } else if('2' == *lineOne) {
         associativity = twoWay;
-    } else if(strcmp("4", lineOne)) {
+    } else if('4' == *lineOne) {
         associativity = fourWay;
     }
 
